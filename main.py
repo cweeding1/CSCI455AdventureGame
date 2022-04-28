@@ -12,6 +12,7 @@ class Player:
         self.potion = 1
         self.recharged = False
         self.weapon = "Plastic Sword"
+        
 
     def fight(self, enemy):
 
@@ -71,13 +72,13 @@ class Player:
 
     def recharge(self):
         if not self.recharged:
-            print("Recharging health")
+            robo.tts("recharging health")
             self.health = self.maxHealth
-            print("You know have " + str(self.health) + "/" + str(self.maxHealth) + " health")
+            robo.tts("you now have full health")
             self.recharged = True
         else:
-            print("Recharge station already used, tough luck")
-            print("Your health is at " + str(self.health) + "/" + str(self.maxHealth))
+            robo.tts("recharge station already used, tough luck")
+            robo.tts("your health is at " + str(self.health) + "/" + str(self.maxHealth))
 
 
 class Enemy:
@@ -91,8 +92,8 @@ class Enemy:
 
 class HardEnemy:
     def __init__(self):
-        self.health = 90
-        self.maxHealth = 90
+        self.health = 100
+        self.maxHealth = 100
         self.attack = 20
         self.defeated = False
         self.taunt = "I AM HUNTER LLOYD, THE KILLER OF GODS"
@@ -103,7 +104,7 @@ class Maze:
         self.positionX = 0
         self.positionY = 0
         self.moveCount = 0
-        self.totalMoves = 25
+        self.totalMoves = 40
         self.facingDirection = "East"
 
         self.items = [["CRUSTY SOCK", 40], ["DEEZ HANDS", 40], ["MAGIC WAND OF METH", 50], ["POOL NOODLE ENERGY SWORD", 50],
@@ -202,15 +203,19 @@ class Maze:
 
         if self.positionY != 0 and self.maze[self.positionX][self.positionY-1] != "x":
             print("There is a path to the West")
+            robo.tts("There is a path to the west")
 
         if self.positionY != (len(self.maze) - 1) and self.maze[self.positionX][self.positionY+1] != "x":
             print("There is a path to the East")
+            robo.tts("There is a path to the east")
 
         if self.positionX != 0 and self.maze[self.positionX-1][self.positionY] != "x":
             print("There is a path to the North")
-
+            robo.tts("There is a path to the north")
+        
         if self.positionX != (len(self.maze) - 1) and self.maze[self.positionX+1][self.positionY] != "x":
             print("There is a path to the South")
+            robo.tts("There is a path to the south")
 
     def checkEnemy(self, x, y):
         #print(self.maze[x][y])
@@ -262,6 +267,7 @@ class Maze:
                 self.updateDirection("North")
                 self.positionX -= 1
                 self.moveCount += 1
+                robo.moveForward()
                 self.checkEnemy(self.positionX, self.positionY)
             else:
                 print("no path to the north")
@@ -274,6 +280,7 @@ class Maze:
                 self.updateDirection("East")
                 self.positionY += 1
                 self.moveCount += 1
+                robo.moveForward()
                 self.checkEnemy(self.positionX, self.positionY)
             else:
                 print("no path to the east")
@@ -287,6 +294,7 @@ class Maze:
                 self.updateDirection("South")
                 self.positionX += 1
                 self.moveCount += 1
+                robo.moveForward()
                 self.checkEnemy(self.positionX, self.positionY)
             else:
                 print("no path to the south")
@@ -300,6 +308,7 @@ class Maze:
                 self.updateDirection("West")
                 self.positionY -= 1
                 self.moveCount += 1
+                robo.moveForward()
                 self.checkEnemy(self.positionX, self.positionY)
             else:
                 print("no path to the west")
@@ -322,25 +331,27 @@ robo = robot.KeyControl()
 while True:
     newMaze.getPaths()
     print(str(newMaze.moveCount) + "/" + str(newMaze.totalMoves))
+    #robo.speechCommand()
     try:
-        choice = int(input("1: North / 2: East / 3: South / 4: West : "))
+        choice = robo.speechCommand()
+        #choice = int(input("1: North / 2: East / 3: South / 4: West : "))
     except:
         print("Invalid Input")
         choice = 0
 
-    if choice == 1:
+    if choice.lower() == "north":
         #newMaze.updateDirection("North")
         newMaze.goNorth()
-    elif choice == 2:
+    elif choice.lower() == "east":
         #newMaze.updateDirection("East")
         newMaze.goEast()
-    elif choice == 3:
+    elif choice.lower() == "south":
         #newMaze.updateDirection("South")
         newMaze.goSouth()
-    elif choice == 4:
+    elif choice.lower() == "west":
         #newMaze.updateDirection("West")
         newMaze.goWest()
-    elif choice == 5:
+    elif choice.lower() == "exit":
         sys.exit(0)
     elif choice == 0:
         pass

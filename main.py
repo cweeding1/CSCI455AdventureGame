@@ -26,15 +26,15 @@ class Player:
                 choice = int(input("1. Fight\n2. Health Potion (Coward)\n3. Run (Even Bigger Coward)\n---> "))
                 if choice == 1:
                     if self.health > 0 and enemy.health > 0:
-                        print("You attack with your " + str(self.weapon))
+                        #print("You attack with your " + str(self.weapon))
+                        robo.tts("You attack with your " + str(self.weapon))
                         #TODO make sure this works
                         robo.armMove()
                         dmg = random.randint(self.attack-15, self.attack)
-                        print("Somehow you dealt " + str(dmg) + " damage to your opponent")
+                        robo.tts("Somehow you dealt " + str(dmg) + " damage to your opponent")
                         enemy.health -= dmg
                         if enemy.health <= 0:
-                            print("\nThat was the killing blow\n"
-                                  "How do you feel about killing an opponent with no arms?")
+                            robo.tts("That was the killing blow, how do you feel about killing an opponent with no arms")
                             enemy.health = 0
                             enemy.defeated = True
                             break
@@ -42,23 +42,23 @@ class Player:
                             enemyDmg = random.randint(enemy.attack-5, enemy.attack)
                             #TODO make sure this works
                             robo.headTiltCommand()
-                            print("\nLuckily your opponent sucks and only dealt " + str(enemyDmg) + " damage to you")
+                            robo.tts("Luckily your opponent sucks and only dealt " + str(enemyDmg) + " damage to you")
                             self.health -= enemyDmg
                             if self.health <= 0:
-                                print("but that was the killing blow and you lost...")
-                                print("ENEMY: " + str(enemy.taunt))
+                                robo.tts("but that was the killing blow and you lost...")
+                                robo.tts("ENEMY: " + str(enemy.taunt))
                                 break
                                 sys.exit(0)
                             else:
-                                print("You have " + str(self.health) + "/" + str(self.maxHealth) + " health, your opponent has " + str(enemy.health) + "/" + str(enemy.maxHealth) + " health\n")
+                                print("You have " + str(self.health) + " out of " + str(self.maxHealth) + " health, and your opponent has " + str(enemy.health) + " out of " + str(enemy.maxHealth) + " health\n")
                 elif choice == 3:
                     chance = random.randint(1, 4)
                     if chance == 1:
-                        print("You tripped while running away and lost 10 health\nYou must fight for your life")
+                        robo.tts("You tripped while running away and lost 10 health, now you must fight for your life")
                         self.health -= 10
                     else:
-                        print("Panzy Ass")
-                        print("You ran away with " + str(self.health) + "/" + str(self.maxHealth) + " health")
+                        robo.tts("panzy Ass")
+                        robo.tts("You ran away with " + str(self.health) + " out of " + str(self.maxHealth) + " health")
                         break
                 elif choice == 2:
                     if self.potion > 0:
@@ -66,9 +66,9 @@ class Player:
                         self.health += 25
                         if self.health > self.maxHealth:
                             self.health = self.maxHealth
-                        print("You used a potion and restored your health to " + str(self.health) + "/" + str(self.maxHealth))
+                        robo.tts("You used a potion and restored your health to " + str(self.health) + " out of " + str(self.maxHealth))
                     else:
-                        print("You don't have any potions dummy")
+                        robo.tts("you do not have any potions dummy")
 
     def recharge(self):
         if not self.recharged:
@@ -145,76 +145,76 @@ class Maze:
     def updateDirection(self, direction):
         if self.facingDirection == "North":
             if direction == "East":
-                print("turning right 90")
+                #print("turning right 90")
                 robo.turnRight()
                 self.facingDirection = direction
             elif direction == "South":
-                print("turning 180")
+                #print("turning 180")
                 robo.turnAround()
                 self.facingDirection = direction
             elif direction == "West":
-                print("turning left 90")
+                #print("turning left 90")
                 robo.turnLeft()
                 self.facingDirection = direction
         elif self.facingDirection == "East":
             if direction == "South":
-                print("turning right 90")
+                #print("turning right 90")
                 robo.turnRight()
                 self.facingDirection = direction
             elif direction == "West":
-                print("turning 180")
+                #print("turning 180")
                 robo.turnAround()
                 self.facingDirection = direction
             elif direction == "North":
-                print("turning left 90")
+                #print("turning left 90")
                 robo.turnLeft()
                 self.facingDirection = direction
         elif self.facingDirection == "South":
             if direction == "West":
-                print("turning right 90")
+                #print("turning right 90")
                 robo.turnRight()
                 self.facingDirection = direction
             elif direction == "North":
-                print("turning 180")
+                #print("turning 180")
                 robo.turnAround()
                 self.facingDirection = direction
             elif direction == "East":
-                print("turning left 90")
+                #print("turning left 90")
                 robo.turnLeft()
                 self.facingDirection = direction
         elif self.facingDirection == "West":
             if direction == "North":
-                print("turning right 90")
+                #print("turning right 90")
                 robo.turnRight()
                 self.facingDirection = direction
             elif direction == "East":
-                print("turning 180")
+                #print("turning 180")
                 robo.turnAround()
                 self.facingDirection = direction
             elif direction == "South":
-                print("turning left 90")
+                #print("turning left 90")
                 robo.turnLeft()
                 self.facingDirection = direction
 
-        print("You are facing " + self.facingDirection)
+        robo.tts("You are facing " + self.facingDirection)
 
     def getPaths(self):
         #print("X:" + str(self.positionX) + " Y:" + str(self.positionY))
 
         if self.positionY != 0 and self.maze[self.positionX][self.positionY-1] != "x":
-            print("There is a path to the West")
+            #print("There is a path to the West")
             robo.tts("There is a path to the west")
 
         if self.positionY != (len(self.maze) - 1) and self.maze[self.positionX][self.positionY+1] != "x":
-            print("There is a path to the East")
+            #print("There is a path to the East")
             robo.tts("There is a path to the east")
 
         if self.positionX != 0 and self.maze[self.positionX-1][self.positionY] != "x":
-            print("There is a path to the North")
+            #print("There is a path to the North")
             robo.tts("There is a path to the north")
         
         if self.positionX != (len(self.maze) - 1) and self.maze[self.positionX+1][self.positionY] != "x":
-            print("There is a path to the South")
+            #print("There is a path to the South")
             robo.tts("There is a path to the south")
 
     def checkEnemy(self, x, y):
@@ -225,21 +225,22 @@ class Maze:
                 Chris.recharge()
 
             if self.maze[x][y] == 6:
-                print("There is a exit sign here, do you have the key")
+                robo.tts("There is a exit sign here, do you have the key")
                 if Chris.key:
-                    print("You used the key to escape\nYOU WIN")
+                    robo.tts("you used the key to escape")
+                    robo.tts("you win")
                     sys.exit(0)
                 else:
-                    print("Come back with the key loser")
+                    robo.tts("come back with the key loser")
 
             else:
                 if self.maze[x][y] == 2:
                     Chris.fight(self.enemy2)
                 elif self.maze[x][y] == 3:
                     Chris.fight(self.enemy3)
-                    print("The enemy dropped a potion and you pick it up")
+                    robo.tts("the enemy dropped a potion and you pick it up")
                     Chris.potion += 1
-                    print("You have " + str(Chris.potion) + " potions, use them wisely")
+                    robo.tts("You have " + str(Chris.potion) + " potions, use them wisely")
                 elif self.maze[x][y] == 8:
                     Chris.fight(self.enemy8)
                 elif self.maze[x][y] == 7:
@@ -249,14 +250,14 @@ class Maze:
                     Chris.fight(self.hardEnemy11)
                     randWeapon = random.choice(self.items)
                     print(randWeapon)
-                    print("There is a weapon on the floor and you pick it up")
+                    robo.tts("there is a weapon on the floor and you pick it up")
                     Chris.weapon = randWeapon[0]
                     Chris.attack = randWeapon[1]
-                    print("Your weapon is now " + str(randWeapon[0]) + " and it can deal up to " + str(randWeapon[1]) + " damage")
+                    robo.tts("your weapon is now " + str(randWeapon[0]) + " and it can deal up to " + str(randWeapon[1]) + " damage")
                 elif self.maze[x][y] == 13:
                     self.hardEnemy13.health = 150
                     Chris.fight(self.hardEnemy13)
-                    print("The enemy dropped a key and you picked it up")
+                    robo.tts("The enemy dropped a key and you picked it up")
                     Chris.key = True
 
         self.updateVisited(x, y)
@@ -270,9 +271,10 @@ class Maze:
                 robo.moveForward()
                 self.checkEnemy(self.positionX, self.positionY)
             else:
-                print("no path to the north")
+                robo.tts("no path to the north")
         else:
-            print("Game Over, Out Of Moves")
+            robo.tts("Game Over, Out Of Moves")
+            sys.exit(0)
 
     def goEast(self):
         if self.moveCount < self.totalMoves:
@@ -283,9 +285,9 @@ class Maze:
                 robo.moveForward()
                 self.checkEnemy(self.positionX, self.positionY)
             else:
-                print("no path to the east")
+                robo.tts("no path to the east")
         else:
-            print("Game Over, Out Of Moves")
+            robo.tts("Game Over, Out Of Moves")
             sys.exit(0)
 
     def goSouth(self):
@@ -297,9 +299,9 @@ class Maze:
                 robo.moveForward()
                 self.checkEnemy(self.positionX, self.positionY)
             else:
-                print("no path to the south")
+                robo.tts("no path to the south")
         else:
-            print("Game Over, Out Of Moves")
+            robo.tts("Game Over, Out Of Moves")
             sys.exit(0)
 
     def goWest(self):
@@ -311,9 +313,9 @@ class Maze:
                 robo.moveForward()
                 self.checkEnemy(self.positionX, self.positionY)
             else:
-                print("no path to the west")
+                robo.tts("no path to the west")
         else:
-            print("Game Over, Out Of Moves")
+            robo.tts("Game Over, Out Of Moves")
             sys.exit(0)
 
 Chris = Player()

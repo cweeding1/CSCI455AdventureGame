@@ -1,5 +1,6 @@
 import random
 import sys
+import robot
 
 
 class Player:
@@ -25,6 +26,8 @@ class Player:
                 if choice == 1:
                     if self.health > 0 and enemy.health > 0:
                         print("You attack with your " + str(self.weapon))
+                        #TODO make sure this works
+                        robo.armMove()
                         dmg = random.randint(self.attack-15, self.attack)
                         print("Somehow you dealt " + str(dmg) + " damage to your opponent")
                         enemy.health -= dmg
@@ -36,6 +39,8 @@ class Player:
                             break
                         else:
                             enemyDmg = random.randint(enemy.attack-5, enemy.attack)
+                            #TODO make sure this works
+                            robo.headTiltCommand()
                             print("\nLuckily your opponent sucks and only dealt " + str(enemyDmg) + " damage to you")
                             self.health -= enemyDmg
                             if self.health <= 0:
@@ -58,8 +63,8 @@ class Player:
                     if self.potion > 0:
                         self.potion -= 1
                         self.health += 25
-                        if self.health > 100:
-                            self.health = 100
+                        if self.health > self.maxHealth:
+                            self.health = self.maxHealth
                         print("You used a potion and restored your health to " + str(self.health) + "/" + str(self.maxHealth))
                     else:
                         print("You don't have any potions dummy")
@@ -84,7 +89,7 @@ class Enemy:
         self.taunt = "You Suck"
 
 
-class HardEnemy():
+class HardEnemy:
     def __init__(self):
         self.health = 90
         self.maxHealth = 90
@@ -99,6 +104,7 @@ class Maze:
         self.positionY = 0
         self.moveCount = 0
         self.totalMoves = 25
+        self.facingDirection = "East"
 
         self.items = [["CRUSTY SOCK", 40], ["DEEZ HANDS", 40], ["MAGIC WAND OF METH", 50], ["POOL NOODLE ENERGY SWORD", 50],
                       ["SUPER SOAKER 3000", 55], ["LOONEYS LEFT LEG", 55], ["HEROIN NEEDLE", 60]]
@@ -135,8 +141,64 @@ class Maze:
         print(self.visitedMaze[3])
         print(self.visitedMaze[4])
 
+    def updateDirection(self, direction):
+        if self.facingDirection == "North":
+            if direction == "East":
+                print("turning right 90")
+                robo.turnRight()
+                self.facingDirection = direction
+            elif direction == "South":
+                print("turning 180")
+                robo.turnAround()
+                self.facingDirection = direction
+            elif direction == "West":
+                print("turning left 90")
+                robo.turnLeft()
+                self.facingDirection = direction
+        elif self.facingDirection == "East":
+            if direction == "South":
+                print("turning right 90")
+                robo.turnRight()
+                self.facingDirection = direction
+            elif direction == "West":
+                print("turning 180")
+                robo.turnAround()
+                self.facingDirection = direction
+            elif direction == "North":
+                print("turning left 90")
+                robo.turnLeft()
+                self.facingDirection = direction
+        elif self.facingDirection == "South":
+            if direction == "West":
+                print("turning right 90")
+                robo.turnRight()
+                self.facingDirection = direction
+            elif direction == "North":
+                print("turning 180")
+                robo.turnAround()
+                self.facingDirection = direction
+            elif direction == "East":
+                print("turning left 90")
+                robo.turnLeft()
+                self.facingDirection = direction
+        elif self.facingDirection == "West":
+            if direction == "North":
+                print("turning right 90")
+                robo.turnRight()
+                self.facingDirection = direction
+            elif direction == "East":
+                print("turning 180")
+                robo.turnAround()
+                self.facingDirection = direction
+            elif direction == "South":
+                print("turning left 90")
+                robo.turnLeft()
+                self.facingDirection = direction
+
+        print("You are facing " + self.facingDirection)
+
     def getPaths(self):
-        print("X:" + str(self.positionX) + " Y:" + str(self.positionY))
+        #print("X:" + str(self.positionX) + " Y:" + str(self.positionY))
 
         if self.positionY != 0 and self.maze[self.positionX][self.positionY-1] != "x":
             print("There is a path to the West")
@@ -151,7 +213,7 @@ class Maze:
             print("There is a path to the South")
 
     def checkEnemy(self, x, y):
-        print(self.maze[x][y])
+        #print(self.maze[x][y])
 
         if self.maze[x][y] != 0:
             if self.maze[x][y] == 12:
@@ -171,6 +233,7 @@ class Maze:
                 elif self.maze[x][y] == 3:
                     Chris.fight(self.enemy3)
                     print("The enemy dropped a potion and you pick it up")
+                    Chris.potion += 1
                     print("You have " + str(Chris.potion) + " potions, use them wisely")
                 elif self.maze[x][y] == 8:
                     Chris.fight(self.enemy8)
@@ -178,7 +241,6 @@ class Maze:
                     Chris.fight(self.enemy7)
 
                 elif self.maze[x][y] == 11:
-                    #TODO pass in a key or weapon for them to drop
                     Chris.fight(self.hardEnemy11)
                     randWeapon = random.choice(self.items)
                     print(randWeapon)
@@ -192,18 +254,12 @@ class Maze:
                     print("The enemy dropped a key and you picked it up")
                     Chris.key = True
 
-                    #TODO have one of these fights give the key, but not both
-                    #node = self.maze[x][y]
-                    #index = self.hardEnemyNode.index(node)
-                    #Chris.fight(self.hardEnemyHolder[index])
-
-            #Chris.fight(self.enemy2)
-
         self.updateVisited(x, y)
 
     def goNorth(self):
         if self.moveCount < self.totalMoves:
             if self.positionX != 0 and self.maze[self.positionX-1][self.positionY] != "x":
+                self.updateDirection("North")
                 self.positionX -= 1
                 self.moveCount += 1
                 self.checkEnemy(self.positionX, self.positionY)
@@ -215,6 +271,7 @@ class Maze:
     def goEast(self):
         if self.moveCount < self.totalMoves:
             if self.positionY != 4 and self.maze[self.positionX][self.positionY+1] != "x":
+                self.updateDirection("East")
                 self.positionY += 1
                 self.moveCount += 1
                 self.checkEnemy(self.positionX, self.positionY)
@@ -224,10 +281,10 @@ class Maze:
             print("Game Over, Out Of Moves")
             sys.exit(0)
 
-
     def goSouth(self):
         if self.moveCount < self.totalMoves:
             if self.positionX != 4 and self.maze[self.positionX+1][self.positionY] != "x":
+                self.updateDirection("South")
                 self.positionX += 1
                 self.moveCount += 1
                 self.checkEnemy(self.positionX, self.positionY)
@@ -240,6 +297,7 @@ class Maze:
     def goWest(self):
         if self.moveCount < self.totalMoves:
             if self.positionY != 0 and self.maze[self.positionX][self.positionY-1] != "x":
+                self.updateDirection("West")
                 self.positionY -= 1
                 self.moveCount += 1
                 self.checkEnemy(self.positionX, self.positionY)
@@ -251,29 +309,40 @@ class Maze:
 
 Chris = Player()
 newMaze = Maze()
+robo = robot.KeyControl()
+
 #TODO will have a robot object here too
 #have functions listen and speak
 #listen will start the listening and do stuff with if
     #if listen == North etc
 #speak will replace almost all of the print statements
 #TODO need animation functions as well
-    #have function for fighting animation, recharge animation, key animation, and 
+    #have function for fighting animation, recharge animation, key animation, and
 
 while True:
     newMaze.getPaths()
     print(str(newMaze.moveCount) + "/" + str(newMaze.totalMoves))
-    choice = int(input("1: North\n"
-                       "2: East\n"
-                       "3: South\n"
-                       "4: West\n"
-                       ": "))
+    try:
+        choice = int(input("1: North / 2: East / 3: South / 4: West : "))
+    except:
+        print("Invalid Input")
+        choice = 0
+
     if choice == 1:
+        #newMaze.updateDirection("North")
         newMaze.goNorth()
     elif choice == 2:
+        #newMaze.updateDirection("East")
         newMaze.goEast()
     elif choice == 3:
+        #newMaze.updateDirection("South")
         newMaze.goSouth()
     elif choice == 4:
+        #newMaze.updateDirection("West")
         newMaze.goWest()
     elif choice == 5:
         sys.exit(0)
+    elif choice == 0:
+        pass
+    else:
+        print("Invalid Input")

@@ -17,13 +17,15 @@ class Player:
     def fight(self, enemy):
 
         if enemy.defeated == True:
-            print("You already beat me")
+            robo.tts("You already beat me")
             return
 
         else:
-            print("There is a enemy here\nYou have " + str(self.health) + "/" + str(self.maxHealth) + " health")
+            robo.tts("There is a enemy here, you have " + str(self.health) + " out of " + str(self.maxHealth) + " health")
             while True:
-                choice = int(input("1. Fight\n2. Health Potion (Coward)\n3. Run (Even Bigger Coward)\n---> "))
+                robo.tts("right, potion, or run")
+                choice = robo.speechCommand()
+                #choice = int(input("1. Fight\n2. Health Potion (Coward)\n3. Run (Even Bigger Coward)\n---> "))
                 if choice == 1:
                     if self.health > 0 and enemy.health > 0:
                         #print("You attack with your " + str(self.weapon))

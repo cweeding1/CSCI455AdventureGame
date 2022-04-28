@@ -12,8 +12,14 @@ TURN = 2
 BODY = 0
 HEADTURN = 3
 HEADTILT = 4
-ELBOW = 7
-SHOULDER = 5
+#dead
+ELBOW = 8
+###
+SHOULDER = 6
+SHOULDER_OUT = 7
+WRIST_UP = 9
+WRIST_TURN = 10
+HAND = 11
 
 
 class KeyControl:
@@ -28,7 +34,11 @@ class KeyControl:
         self.turn = 6000
         self.elbow = 6000
         self.shoulder = 6000
-
+        self.shoulder_out = 6000
+        self.wrist_up = 6000
+        self.wrist_turn = 6000
+        self.hand = 6000
+        
         self.tango.setTarget(MOTORS, 6000)
         self.tango.setTarget(TURN, 6000)
         self.tango.setTarget(ELBOW, 6000)
@@ -89,16 +99,16 @@ class KeyControl:
 
     def armMove(self):
         self.shoulder = 6700
-        self.elbow = 6700
+        self.wrist_up = 7000
         self.tango.setTarget(SHOULDER, self.shoulder)
         time.sleep(0.5)
-        self.tango.setTarget(ELBOW, self.elbow)
+        self.tango.setTarget(WRIST_UP, self.wrist_up)
         time.sleep(0.5)
         self.shoulder = 6000
-        self.elbow = 6000
+        self.wrist_up = 6000
         self.tango.setTarget(SHOULDER, self.shoulder)
-        self.tango.setTarget(ELBOW, self.elbow)
-
+        self.tango.setTarget(WRIST_UP, self.wrist_up)
+        time.sleep(1)
 
     #TODO have this listen and return a word
     def speechCommand(self):
@@ -118,9 +128,12 @@ class KeyControl:
                     word = r.recognize_google(audio)
                     print(word)
                     #TODO North, East, South, West, Fight, Run
-                    if word.lower().find('hello') > -1:
+                    if word != "":
                         return word
                         listening = False
+                    #if word.lower().find('hello') > -1:
+                    #    return word
+                    #    listening = False
                 except sr.UnknownValueError:
                     print("Don't know that word")
 
